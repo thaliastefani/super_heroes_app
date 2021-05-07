@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_06_185015) do
+ActiveRecord::Schema.define(version: 2021_05_07_171638) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -18,11 +18,19 @@ ActiveRecord::Schema.define(version: 2021_05_06_185015) do
   create_table "genders", force: :cascade do |t|
     t.string "name", null: false
     t.string "code", null: false
+    t.index ["code"], name: "index_genders_on_code", unique: true
+  end
+
+  create_table "hero_powers", force: :cascade do |t|
+    t.bigint "hero_id"
+    t.bigint "power_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["hero_id"], name: "index_hero_powers_on_hero_id"
+    t.index ["power_id"], name: "index_hero_powers_on_power_id"
   end
 
   create_table "heroes", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "real_name"
     t.integer "height"
     t.integer "weight"
     t.date "birthday"
@@ -30,6 +38,8 @@ ActiveRecord::Schema.define(version: 2021_05_06_185015) do
     t.bigint "race_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "name", limit: 200, null: false
+    t.string "real_name", limit: 200
     t.index ["gender_id"], name: "index_heroes_on_gender_id"
     t.index ["race_id"], name: "index_heroes_on_race_id"
   end
@@ -37,11 +47,17 @@ ActiveRecord::Schema.define(version: 2021_05_06_185015) do
   create_table "powers", force: :cascade do |t|
     t.string "name", null: false
     t.string "code", null: false
+    t.index ["code"], name: "index_powers_on_code", unique: true
   end
 
   create_table "races", force: :cascade do |t|
     t.string "name", null: false
     t.string "code", null: false
+    t.index ["code"], name: "index_races_on_code", unique: true
   end
 
+  add_foreign_key "hero_powers", "heroes"
+  add_foreign_key "hero_powers", "powers"
+  add_foreign_key "heroes", "genders"
+  add_foreign_key "heroes", "races"
 end

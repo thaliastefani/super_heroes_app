@@ -25,12 +25,25 @@ class Hero < ApplicationRecord
   validates :weight, :height, numericality: { only_integer: true, allow_blank: true }
 
   validate :birthday_cannot_be_in_future
+  validate :birthday_valid
+
+  private
 
   def birthday_cannot_be_in_future
     errors.add(:birthday, "can't be in the future") if birthday.present? && birthday.future?
   end
 
-  private
+  def birthday_valid
+    errors.add(:birthday, "is invalid") if !date_parse?
+  end
+
+  def date_parse?
+    begin
+      Date.parse(birthday.to_s) if birthday.present?
+    rescue ArgumentError
+      false
+    end
+  end
 
   def format_fields
     self.name = name.gsub(/[^0-9A-Za-z\s]/, '').upcase.squeeze(" ") if attribute_present?(:name)

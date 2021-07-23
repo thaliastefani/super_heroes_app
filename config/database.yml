@@ -23,6 +23,7 @@ default: &default
   host: localhost
   username: dev
   password: devdb123
+  port: 5433
 
 development:
   <<: *default
